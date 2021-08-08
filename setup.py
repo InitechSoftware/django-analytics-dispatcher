@@ -15,7 +15,7 @@ setup(
     url='https://github.com/InitechSoftware/django-analytics-dispatcher',
     packages=['analytics_dispatcher'],
     include_package_data=True,
-    install_requires=['django>=2.0', 'requests>=2.24', 'django-ipware', 'ua-parser',
+    install_requires=['django>=3.2', 'requests', 'django-ipware', 'ua-parser',
                       'django-admin-list-filter-dropdown', 'mixpanel'],
     zip_safe=False,
     classifiers=[
