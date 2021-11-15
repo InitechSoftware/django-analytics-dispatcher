@@ -82,8 +82,11 @@ class EventsDispatcher:
 
     def cleanup_old_events(self, age: int = 28):
         deleted_cnt = (EventToDispatch.objects
-                       .filter(timestamp__lt=now() - timedelta(days=age))
-                       .exclude(Q(sent_amplitude=None) | Q(sent_intercom=None) | Q(sent_user_dot_com=None))
+                       .filter(timestamp__lt=now() - timedelta(days=age/14))
+                       .exclude(Q(send_amplitude=True, sent_amplitude=None)
+                                | Q(send_intercom=True, sent_intercom=None)
+                                | Q(send_mix_panel=True, sent_mix_panel=None)
+                                | Q(send_user_dot_com=True, sent_user_dot_com=None))
                        ).delete()[0]
         deleted_cnt += EventToDispatch.objects.filter(timestamp__lt=now() - timedelta(days=age*2)).delete()[0]
         logger.info('cleanup_old_events deleted %s records', deleted_cnt)
