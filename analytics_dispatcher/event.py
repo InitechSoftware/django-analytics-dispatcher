@@ -88,7 +88,7 @@ class EventsDispatcher:
         deleted_cnt += EventToDispatch.objects.filter(timestamp__lt=now() - timedelta(days=age*2)).delete()[0]
         logger.info('cleanup_old_events deleted %s records', deleted_cnt)
 
-    def process_event_queue(self, clean: bool = False):
+    def process_event_queue(self, clean: bool = True):
         logger.info('process_event_queue started')
         try:
             while amplitude.process_batch() > 0:
