@@ -38,6 +38,10 @@ class EventToDispatch(models.Model):
     sent_mix_panel = models.DateTimeField(default=None, blank=True, null=True, db_index=True)
     status_mix_panel = models.CharField(max_length=256, null=True)
 
+    send_ga4 = models.BooleanField()
+    sent_ga4 = models.DateTimeField(default=None, blank=True, null=True, db_index=True)
+    status_ga4 = models.CharField(max_length=256, null=True)
+
     class Meta:
         ordering = ['-timestamp']
 
@@ -66,6 +70,7 @@ class EventToDispatch(models.Model):
 
         if self.user_id is not None:
             if self.user_id not in users_cache:
+                # noinspection PyUnresolvedReferences
                 users_cache[self.user_id] = {
                     'user_id': self.user.id,
                     'email': self.user.email,

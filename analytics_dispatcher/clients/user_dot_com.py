@@ -35,12 +35,10 @@ class UserDotComBackend(AnalyticsBackend):
             response = self.session.request(method, url, headers=local_headers, json=data)
         if response.status_code >= 300:
             logger.warning('user.com request "%s %s %s" bad response with status: %s, body: %s',
-                           method, path, data,
-                           response.status_code, response.text)
+                           method, path, data, response.status_code, response.text)
         else:
             logger.info('user.com request "%s %s %s" response with status: %s, body: %s',
-                           method, path, data,
-                           response.status_code, response.text)
+                        method, path, data, response.status_code, response.text)
         return response
 
     def create_user(self, user):
@@ -82,7 +80,7 @@ class UserDotComBackend(AnalyticsBackend):
             return validate_res
 
         self.send_event(event.event_type, event.user, event.timestamp.timestamp(),
-                       event.event_properties, user_data=event.user_properties)
+                        event.event_properties, user_data=event.user_properties)
         event.sent_user_dot_com = now()
         event.status_user_dot_com = 'ok'
         event.save(update_fields=('sent_user_dot_com', 'status_user_dot_com'))

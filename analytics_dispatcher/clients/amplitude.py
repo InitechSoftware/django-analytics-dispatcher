@@ -121,6 +121,7 @@ def process_batch(number: int = 100) -> int:
             else:
                 raise
 
-    EventToDispatch.objects.filter(pk__in=[event.pk for event in events]).update(sent_amplitude=now(), status_amplitude='ok')
+    EventToDispatch.objects.filter(pk__in=[event.pk for event in events]).update(sent_amplitude=now(),
+                                                                                 status_amplitude='ok')
     logger.info('sent %d events to amplitude', events_count)
     return events_count

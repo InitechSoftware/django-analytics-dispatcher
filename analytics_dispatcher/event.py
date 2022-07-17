@@ -11,7 +11,7 @@ from django.utils.timezone import now
 from ipware import get_client_ip
 from ua_parser import user_agent_parser
 
-from .clients import intercom, amplitude, user_dot_com
+from .clients import intercom, amplitude, user_dot_com, ga4
 from .data_structures import EventType
 from .models import EventToDispatch
 
@@ -122,6 +122,13 @@ class EventsDispatcher:
                 self.capture_exception()
             logger.error("Error on submitting events to mix_panel: %s", str(e))
 
+        try:
+            ga4.ga4_backend.process_batch()
+        except Exception as e:
+            if self.capture_exception:
+                self.capture_exception()
+            logger.error("Error on submitting events to GA4: %s", str(e))
+
         if clean:
             self.cleanup_old_events()
 
@@ -190,6 +197,7 @@ class EventsDispatcher:
             send_intercom=send_intercom,
             send_user_dot_com=event_type.send_user_dot_com,
             send_mix_panel=event_type.send_mix_panel,
+            send_ga4=event_type.send_ga4,
         )
         logger.debug('got analytics event: %s', event.as_dict())
         if event_type.instant_send_intercom or instant_send_intercom:
