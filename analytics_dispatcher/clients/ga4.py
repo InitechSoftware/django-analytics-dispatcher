@@ -1,4 +1,5 @@
 import datetime
+import json
 import logging
 
 from django.conf import settings
@@ -40,17 +41,17 @@ class Ga4Client(AnalyticsBackend):
             'client_id': str(user_id),
             'non_personalized_ads': False,
             'user_id': str(user_id),
-            'timestamp_micros': int(timestamp.timestamp() * 1000),
+            # 'timestamp_micros': int(timestamp.timestamp() * 1000),
             'user_properties': user_properties,
             'events': [event_data],
         }
         response = self.session.post(self.BASE_URL, params=auth_params, headers=local_headers, json=events_data2send)
         if response.status_code >= 300:
             logger.warning('GA4 request "%s" bad response with status: %s, body: "%s"',
-                           events_data2send, response.status_code, response.text)
+                           json.dumps(events_data2send), response.status_code, response.text)
         else:
             logger.info('GA4 request "%s" response with status: %s, body: "%s"',
-                        events_data2send, response.status_code, response.text)
+                        json.dumps(events_data2send), response.status_code, response.text)
         return response
 
     def push_event(self, event: models.EventToDispatch) -> str:
@@ -59,7 +60,8 @@ class Ga4Client(AnalyticsBackend):
             return validate_res
 
         user_data = event.user_properties
-        ga4_event = {'name': event.event_type, 'params': event.event_properties()}
+        ga4_event = {'name': event.event_type,
+                     'params': {key: str(data) for key, data in event.event_properties.items()}}
 
         user_properties = {key[:24]: {"value": str(data)} for key, data in user_data.items()}
 
